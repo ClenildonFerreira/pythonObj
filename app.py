@@ -7,6 +7,7 @@ from funcionalidades import Funcs
 import pycep_correios
 
 root = tix.Tk()
+media = 0
 
 class Application(Funcs, Relatorios, Validadores):
     def __init__(self):
@@ -36,7 +37,9 @@ class Application(Funcs, Relatorios, Validadores):
             messagebox.showinfo("Titulo da janela", "Cep não encontrado")
     def tela(self):
         self.root.title("Cadastro de alunos")
-        self.root.configure(background= '#1e3743')
+        #self.root.configure(background= '#1e3743')
+        self.bg=ImageTk.PhotoImage(file="img/login.png")
+        self.bg_img=Label(self.root, image=self.bg).place(x=0, y=0, relwidth=1, relheight=1)
         self.root.geometry("700x500")
         self.root.resizable(True, True)
         self.root.maxsize(width= 900, height= 700)
@@ -49,6 +52,7 @@ class Application(Funcs, Relatorios, Validadores):
         self.frame_2 = Frame(self.root, bd=4, bg='#dfe3ee',
                              highlightbackground='#759fe6', highlightthickness=3)
         self.frame_2.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.46)
+    
     def widgets_frame1(self):
         self.abas = ttk.Notebook(self.frame_1)
         self.aba1 = GradientFrame(self.abas)
@@ -71,6 +75,7 @@ class Application(Funcs, Relatorios, Validadores):
                                 activebackground='#108ecb', activeforeground="white"
                                 , font = ('verdana', 8, 'bold'), command= self.limpa_aluno)
         self.bt_limpar.place(relx= 0.2, rely=0.1, relwidth=0.1, relheight= 0.15)
+        
         ### Criação do botao buscar
         self.bt_buscar = Button(self.aba1, text="Buscar", bd=2, bg = '#107db2',fg = 'white'
                                 , font = ('verdana', 8, 'bold'), command = self.janela2)
@@ -116,84 +121,100 @@ class Application(Funcs, Relatorios, Validadores):
         self.nome_entry.place(relx=0.08, rely=0.35, relwidth=0.5)
 
         ## Criação da label e entrada do cep
-        self.lb_cep = Button(self.aba1, text="CEP", bg='#dfe3ee', fg='#107db2',
+        self.lb_cep = Label(self.aba1, text="CEP", bg= '#dfe3ee', fg = '#107db2')
+        self.lb_cep.place(relx=0.6, rely=0.35)
+        
+        self.lb_cep = Button(self.aba1, text="Buscar", bg='#dfe3ee', fg='#107db2',
                              command= self.cepCorreios)
-        self.lb_cep.place(relx=0.65, rely=0.35)
+        self.lb_cep.place(relx=0.86, rely=0.35)
 
-        self.cep_entry = Entry(self.aba1)
-        self.cep_entry.place(relx=0.75, rely=0.35, relwidth=0.2)
+        self.cep_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd2)
+        self.cep_entry.place(relx=0.65, rely=0.35, relwidth=0.2)
 
         ## Criação da label e entrada do telefone
-        self.lb_fone = Label(self.aba1, text="Telefone", bg= '#dfe3ee', fg = '#107db2')
-        self.lb_fone.place(relx=0.05, rely=0.55)
+        self.lb_fone = Label(self.aba1,  text="Telefone", bg= '#dfe3ee', fg = '#107db2')
+        self.lb_fone.place(relx=0.01, rely=0.55)
 
-        self.fone_entry = Entry(self.aba1)
-        self.fone_entry.place(relx=0.15, rely=0.55, relwidth=0.3)
+        self.fone_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd3)
+        self.fone_entry.place(relx=0.1, rely=0.55, relwidth=0.3)
 
         ## Criação da label e entrada da cidade
         self.lb_cidade = Label(self.aba1, text="Cidade", bg= '#dfe3ee', fg = '#107db2')
-        self.lb_cidade.place(relx=0.5, rely=0.55)
+        self.lb_cidade.place(relx=0.42, rely=0.55)
 
         self.cidade_entry = Entry(self.aba1)
-        self.cidade_entry.place(relx=0.6, rely=0.55, relwidth=0.3)
+        self.cidade_entry.place(relx=0.5, rely=0.55, relwidth=0.3)
 
         ## Criação da label e entrada do logradouro
         self.lb_lograd = Label(self.aba1, text="Endereço", bg='#dfe3ee', fg='#107db2')
-        self.lb_lograd.place(relx=0.05, rely=0.75)
+        self.lb_lograd.place(relx=0.01, rely=0.75)
 
         self.lograd_entry = Entry(self.aba1)
-        self.lograd_entry.place(relx=0.15, rely=0.75, relwidth=0.3)
+        self.lograd_entry.place(relx=0.1, rely=0.75, relwidth=0.3)
 
         ## Criação da label e entrada da bairro
         self.lb_bairro = Label(self.aba1, text="Bairro", bg='#dfe3ee', fg='#107db2')
-        self.lb_bairro.place(relx=0.5, rely=0.75)
+        self.lb_bairro.place(relx=0.42, rely=0.75)
 
         self.bairro_entry = Entry(self.aba1)
-        self.bairro_entry.place(relx=0.6, rely=0.75, relwidth=0.3)
+        self.bairro_entry.place(relx=0.5, rely=0.75, relwidth=0.3)
         
         ## Criação da label e entrada da Nota Ad1
-        self.lb_ad1 = Label(self.aba2, text="AD1", bg= '#dfe3ee', fg = '#107db2')
-        self.lb_ad1.place(relx=0.5, rely=0.20)
+        self.lb_ad1 = Label(self.aba1, text="AD1", bg= '#dfe3ee', fg = '#107db2', )
+        self.lb_ad1.place(relx=0.82, rely=0.55)
 
-        self.ad1_entry = Entry(self.aba2)
-        self.ad1_entry.place(relx=0.6, rely=0.20, relwidth=0.3)
+        self.ad1_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd4)
+        self.ad1_entry.place(relx=0.87, rely=0.55, relwidth=0.04)
         
         ## Criação da label e entrada da Nota Ad2
-        self.lb_ad2 = Label(self.aba2, text="AD2", bg= '#dfe3ee', fg = '#107db2')
-        self.lb_ad2.place(relx=0.5, rely=0.40)
+        self.lb_ad2 = Label(self.aba1, text="AD2", bg= '#dfe3ee', fg = '#107db2')
+        self.lb_ad2.place(relx=0.82, rely=0.75)
 
-        self.ad2_entry = Entry(self.aba2)
-        self.ad2_entry.place(relx=0.6, rely=0.40, relwidth=0.3)
+        self.ad2_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd4)
+        self.ad2_entry.place(relx=0.87, rely=0.75, relwidth=0.04)
+        
+       # def media():
+        #global media
+            #ad1 = self.ad1_entry.get()
+            #nota1 = float(ad1)
+            #ad2 = self.ad2_entry.get()
+            #nota2 = float(ad2)
+            #media = nota1 + nota2 / 2
+            
+            #return media
+            
         
         ## Criação da label e entrada da Nota Adf
-        self.lb_adf = Label(self.aba2, text="ADF", bg= '#dfe3ee', fg = '#107db2')
-        self.lb_adf.place(relx=0.5, rely=0.60)
-
-        self.adf_entry = Entry(self.aba2, state="disabled")
-        self.adf_entry.place(relx=0.6, rely=0.60, relwidth=0.3)
-
-        #### drop down button
-        self.Tipvar = StringVar()
-        self.TipV = ("Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viuvo(a)")
-        self.Tipvar.set("Solteiro(a)")
-        self.popupMenu = OptionMenu(self.aba2, self.Tipvar, *self.TipV)
-        self.popupMenu.place(relx= 0.1, rely=0.1, relwidth=0.2, relheight=0.2)
-        self.estado_civil = self.Tipvar.get()
-        print(self.estado_civil)
+        self.lb_adf = Label(self.aba1, text="ADF", bg= '#dfe3ee', fg = '#107db2')
+        self.lb_adf.place(relx=0.94, rely=0.60)
+        
+        if media >= 7:
+            self.adf_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd4, state="disabled")
+            self.adf_entry.place(relx=0.94, rely=0.73, relwidth=0.04)
+            
+        elif media == 0:
+            self.adf_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd4, state="disabled")
+            self.adf_entry.place(relx=0.94, rely=0.73, relwidth=0.04)
+        else:
+            self.adf_entry = Entry(self.aba1, validate="key",validatecommand=self.vcmd4)
+            self.adf_entry.place(relx=0.94, rely=0.73, relwidth=0.04)
+            
     def lista_frame2(self):
         self.listaCli = ttk.Treeview(self.frame_2, height=3,
-                                     column=("col1", "col2", "col3", "col4"))
+                                     column=("col1", "col2", "col3", "col4", "col5"))
         self.listaCli.heading("#0", text="")
-        self.listaCli.heading("#1", text="Codigo")
+        self.listaCli.heading("#1", text="Matrícula")
         self.listaCli.heading("#2", text="Nome")
-        self.listaCli.heading("#3", text="Telefone")
-        self.listaCli.heading("#4", text="Cidade")
-        self.listaCli.column("#0", width=1)
-        self.listaCli.column("#1", width=50)
-        self.listaCli.column("#2", width=200)
-        self.listaCli.column("#3", width=125)
-        self.listaCli.column("#4", width=125)
-        self.listaCli.place(relx=0.01, rely=0.1, relwidth=0.95, relheight=0.85)
+        self.listaCli.heading("#3", text="AD1")
+        self.listaCli.heading("#4", text="AD2")
+        self.listaCli.heading("#5", text="Media")
+        self.listaCli.column("#0", width=0)
+        self.listaCli.column("#1", width=60, anchor="center")
+        self.listaCli.column("#2", width=100, anchor="center")
+        self.listaCli.column("#3", width=100, anchor="center")
+        self.listaCli.column("#4", width=100, anchor="center")
+        self.listaCli.column("#5", width=100, anchor="center")
+        self.listaCli.place(relx=0.01, rely=0.1, relwidth=0.95, relheight=0.85,)
 
         self.scroolLista = Scrollbar(self.frame_2, orient='vertical')
         self.listaCli.configure(yscroll=self.scroolLista.set)
@@ -226,7 +247,10 @@ class Application(Funcs, Relatorios, Validadores):
     def validaEntradas(self):
         ### Naming input validators
 
-        self.vcmd2 = (self.root.register(self.validate_entry2), "%P")
+        self.vcmd2 = (self.root.register(self.validate_entry20), "%P")
+        self.vcmd3 = (self.root.register(self.validate_entry11), "%P")
+        self.vcmd4 = (self.root.register(self.validate_entry2float), "%P")
 
+  
 
 Application()

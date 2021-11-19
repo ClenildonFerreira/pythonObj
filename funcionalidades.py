@@ -6,6 +6,13 @@ class Funcs():
         self.cidade_entry.delete(0, END)
         self.fone_entry.delete(0, END)
         self.nome_entry.delete(0, END)
+        self.cep_entry.delete(0, END)
+        self.lograd_entry.delete(0, END)
+        self.bairro_entry.delete(0, END)
+        self.ad1_entry.delete(0, END)
+        self.ad2_entry.delete(0, END)
+        self.adf_entry.delete(0, END)    
+    
     def conecta_bd(self):
         self.conn = sqlite3.connect("alunos.db")
         self.cursor = self.conn.cursor(); print("Conectando ao banco de dados")
@@ -19,27 +26,50 @@ class Funcs():
                 cod INTEGER PRIMARY KEY,
                 nome_aluno CHAR(40) NOT NULL,
                 telefone INTEGER(20),
-                cidade CHAR(40)               
+                cidade CHAR(40), 
+                cep CHAR(40), 
+                endereco CHAR(80), 
+                bairro CHAR(80),
+                avaliacao_one INTEGER(20),
+                avaliacao_two INTEGER(20),
+                media INTEGER(20),
+                adf INTEGER(20)
+                              
             );
         """)
         self.conn.commit(); print("Banco de dados criado")
         self.desconecta_bd()
+
 
     def variaveis(self):
         self.codigo = self.codigo_entry.get()
         self.nome = self.nome_entry.get()
         self.fone = self.fone_entry.get()
         self.cidade = self.cidade_entry.get()
+        self.cep = self.cep_entry.get()
+        self.endereco = self.lograd_entry.get()
+        self.bairro = self.bairro_entry.get()
+        self.ad1 = self.ad1_entry.get()
+        self.ad2 = self.ad2_entry.get()
+        self.adf = self.adf_entry.get()
+        
+        
     def OnDoubleClick(self, event):
         self.limpa_aluno()
         self.listaCli.selection()
 
         for n in self.listaCli.selection():
-            col1, col2, col3, col4 = self.listaCli.item(n, 'values')
+            col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = self.listaCli.item(n, 'values')
             self.codigo_entry.insert(END, col1)
             self.nome_entry.insert(END, col2)
-            self.fone_entry.insert(END, col3)
-            self.cidade_entry.insert(END, col4)
+            self.ad1_entry.insert(END, col3)
+            self.ad2_entry.insert(END, col4)
+            self.adf_entry.insert(END, col5)
+            self.fone_entry.insert(END, col6)
+            self.cidade_entry.insert(END, col7)
+            self.cep_entry.insert(END, col8)
+            self.lograd_entry.insert(END, col9)
+            self.bairro_entry.insert(END, col10)
 
     def add_aluno(self):
         self.variaveis()
@@ -50,8 +80,8 @@ class Funcs():
         else:
             self.conecta_bd()
 
-            self.cursor.execute(""" INSERT INTO alunos (nome_aluno, telefone, cidade)
-                VALUES (?, ?, ?)""", (self.nome, self.fone, self.cidade))
+            self.cursor.execute(""" INSERT INTO alunos (nome_aluno, avaliacao_one, avaliacao_two, adf, telefone, cidade, cep, endereco, bairro)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", (self.nome, self.ad1, self.ad2, self.adf, self.fone, self.cidade, self.cep, self.endereco, self.bairro))
             self.conn.commit()
             self.desconecta_bd()
             self.select_lista()
@@ -59,9 +89,9 @@ class Funcs():
     def altera_aluno(self):
         self.variaveis()
         self.conecta_bd()
-        self.cursor.execute(""" UPDATE alunos SET nome_aluno = ?, telefone = ?, cidade = ?
+        self.cursor.execute(""" UPDATE alunos SET nome_aluno = ?, avaliacao_one = ?, avaliacao_two = ?, adf = ?, telefone = ?, cidade = ?, cep = ?, endereco = ?, bairro = ?
             WHERE cod = ? """,
-                            (self.nome, self.fone, self.cidade, self.codigo))
+                            (self.nome, self.ad1, self.ad2, self.adf, self.fone, self.cidade, self.cep, self.endereco, self.bairro, self.codigo))
         self.conn.commit()
         self.desconecta_bd()
         self.select_lista()
@@ -78,7 +108,7 @@ class Funcs():
     def select_lista(self):
         self.listaCli.delete(*self.listaCli.get_children())
         self.conecta_bd()
-        lista = self.cursor.execute(""" SELECT cod, nome_aluno, telefone, cidade FROM alunos
+        lista = self.cursor.execute(""" SELECT cod, nome_aluno, avaliacao_one, avaliacao_two, adf, telefone, cidade, cep, endereco, bairro  FROM alunos
             ORDER BY nome_aluno ASC; """)
         for i in lista:
             self.listaCli.insert("", END, values=i)
@@ -90,7 +120,7 @@ class Funcs():
         self.nome_entry.insert(END, '%')
         nome = self.nome_entry.get()
         self.cursor.execute(
-            """ SELECT cod, nome_aluno, telefone, cidade FROM alunos
+            """ SELECT cod, nome_aluno, avaliacao_one, avaliacao_two, adf, telefone, cidade, cep, endereco, bairro FROM alunos
             WHERE nome_aluno LIKE '%s' ORDER BY nome_aluno ASC""" % nome)
         buscanomeCli = self.cursor.fetchall()
         for i in buscanomeCli:
